@@ -15,6 +15,6 @@
   "dependencies": {
     "ioredis": "^4.2.0",
     "mongodb": "^3.1.8",
-    "moonbeam-mongodb": "git+https://github.com/prdn/moonbeam-mongodb.git"
+    "moonbeam-mongodb": "git+https://github.com/bitfinexcom/moonbeam-mongodb.git"
   }
 }
