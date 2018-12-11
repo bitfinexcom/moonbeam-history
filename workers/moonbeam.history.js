@@ -22,12 +22,13 @@ class MoonbeamHistory {
       }
 
       const parsed = JSON.parse(data)
-      let [, username, type, entry] = parsed
+      let [, type, entry] = parsed
 
       let ts = entry[4]
-      if (username === 'tu') {
-        ts = type[2]
-        username = parsed.pop()
+      let username = parsed.pop()
+
+      if (type === 'tu') {
+        ts = entry[2]
       }
 
       const doc = {
