@@ -9,6 +9,22 @@ class MoonbeamHistory {
     this.db = db
   }
 
+  handleTrade (msg) {
+    const [id, pair, t, amount, price] = msg
+    const trade = {
+      id: id,
+      pair: pair,
+      symbol: 't' + pair,
+      t: t / 1000,
+      price: price,
+      amount: amount,
+      side: 0 // amount already has sign
+    }
+
+    this.redisPubTrades.rpush('te.out', JSON.stringify({ o: trade, a: 'te_trade_mem' }))
+    this.redisPubTrades.publish('eosfinex.trades.1', JSON.stringify(trade))
+  }
+
   work () {
     const { redisListName, interval } = this.conf
     this.redis.lpop(redisListName, (err, data) => {
@@ -20,8 +36,8 @@ class MoonbeamHistory {
         this.tmos = setTimeout(() => { this.work() }, interval)
         return
       }
-
       const parsed = JSON.parse(data)
+
       let [, type, entry] = parsed
 
       let ts = entry[4]
@@ -29,6 +45,8 @@ class MoonbeamHistory {
 
       if (type === 'tu') {
         ts = entry[2]
+
+        this.handleTrade(entry)
       }
 
       const doc = {
@@ -52,6 +70,7 @@ class MoonbeamHistory {
       },
       (cb) => {
         this.redis = new Redis(this.conf.redisPort, this.conf.redisUrl)
+        this.redisPubTrades = new Redis(this.conf.redisPort, this.conf.redisUrl)
         cb()
       },
       (cb) => {
@@ -67,6 +86,7 @@ class MoonbeamHistory {
       },
       (cb) => {
         this.redis.disconnect()
+        this.redisPubTrades.disconnect()
         cb()
       },
       (cb) => {
