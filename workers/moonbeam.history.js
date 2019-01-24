@@ -1,12 +1,12 @@
 'use strict'
 
+const Redis = require('ioredis')
 const async = require('async')
 
 class MoonbeamHistory {
-  constructor (conf, db, redis) {
+  constructor (conf, db) {
     this.conf = conf
     this.db = db
-    this.redis = redis
   }
 
   work () {
@@ -37,7 +37,9 @@ class MoonbeamHistory {
         entry: parsed
       }
 
-      this.db.collection.insertOne(doc, () => {
+      this.db.collection.insertOne(doc, (err) => {
+        if (err) console.error(err)
+
         this.tmos = setTimeout(() => { this.work() }, interval)
       })
     })
@@ -47,6 +49,10 @@ class MoonbeamHistory {
     async.series([
       (cb) => {
         this.db.start(cb)
+      },
+      (cb) => {
+        this.redis = new Redis(this.conf.redisPort, this.conf.redisUrl)
+        cb()
       },
       (cb) => {
         this.work()
@@ -70,8 +76,4 @@ class MoonbeamHistory {
   }
 }
 
-function worker (opts, db, redis) {
-  return new MoonbeamHistory(opts, db, redis)
-}
-
-module.exports = worker
+module.exports = MoonbeamHistory
