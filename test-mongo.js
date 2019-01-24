@@ -1,6 +1,6 @@
 'use strict'
 
-const dbConf = require('./config/moonbeam.mongo.conf.json')
+const dbConf = require('./config/mongo.userdata.conf.json')
 const db = require('moonbeam-mongodb')(dbConf)
 
 db.start(() => {
