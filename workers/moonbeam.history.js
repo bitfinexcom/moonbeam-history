@@ -10,7 +10,7 @@ class MoonbeamHistory {
   }
 
   handleTrade (msg) {
-    const [id, pair, t, amount, price] = msg
+    const [id, pair, t, , amount, price] = msg
     const trade = {
       id: id,
       pair: pair,
