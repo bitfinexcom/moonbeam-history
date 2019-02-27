@@ -10,7 +10,9 @@ class MoonbeamHistory {
   }
 
   handleTrade (msg) {
-    const [id, pair, t, , amount, price] = msg
+    const [pair, , tr] = msg
+    const [id, t, amount, price] = tr
+
     const trade = {
       id: id,
       pair: pair,
@@ -40,13 +42,17 @@ class MoonbeamHistory {
 
       let [, type, entry] = parsed
 
+      if (type === 'te') {
+        this.handleTrade(parsed)
+        this.tmos = setTimeout(() => { this.work() }, interval)
+        return
+      }
+
       let ts = entry[4]
       let username = parsed.pop()
 
       if (type === 'tu') {
         ts = entry[2]
-
-        this.handleTrade(entry)
       }
 
       const doc = {
