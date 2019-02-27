@@ -32,7 +32,7 @@ class MoonbeamHistory {
         console.log(err)
       }
 
-      if (data === null) {
+      if (!data) {
         this.tmos = setTimeout(() => { this.work() }, interval)
         return
       }
