@@ -16,7 +16,7 @@ class MoonbeamHistory {
     const trade = {
       id: id,
       pair: pair,
-      symbol: 't' + pair,
+      symbol: this.conf.tradeSymbolPrefix + pair,
       t: t / 1000,
       price: price,
       amount: amount,
