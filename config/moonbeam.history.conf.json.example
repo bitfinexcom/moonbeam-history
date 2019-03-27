@@ -2,6 +2,5 @@
   "redisUrl": "127.0.0.1",
   "redisPort": 6379,
   "redisListName": "test_foo",
-  "interval": 50,
-  "tradeSymbolPrefix": "P"
+  "interval": 50
 }
