@@ -75,8 +75,8 @@ class MoonbeamHistory {
         this.db.start(cb)
       },
       (cb) => {
-        this.redis = new Redis(this.conf.redisPort, this.conf.redisUrl)
-        this.redisPubTrades = new Redis(this.conf.redisPort, this.conf.redisUrl)
+        this.redis = new Redis(this.conf.redisConf)
+        this.redisPubTrades = new Redis(this.conf.redisConf)
         cb()
       },
       (cb) => {
