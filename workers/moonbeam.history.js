@@ -2,6 +2,7 @@
 
 const Redis = require('ioredis')
 const async = require('async')
+const Long = require('mongodb').Long
 
 class MoonbeamHistory {
   constructor (conf, db) {
@@ -10,11 +11,12 @@ class MoonbeamHistory {
   }
 
   handleTrade (msg) {
-    const [pair, , tr] = msg
+    const [pair, , tr, , uintId] = msg
     const [id, t, amount, price] = tr
 
     const trade = {
       id: id,
+      uintId: uintId,
       pair: pair,
       symbol: 't' + pair,
       t: t / 1000,
@@ -40,7 +42,7 @@ class MoonbeamHistory {
       }
       const parsed = JSON.parse(data)
 
-      let [, type, entry] = parsed
+      let [, type, entry, , uintId] = parsed
 
       if (type === 'te') {
         this.handleTrade(parsed)
@@ -56,6 +58,7 @@ class MoonbeamHistory {
       }
 
       const doc = {
+        uintId: Long.fromString(uintId),
         username: username,
         ts: ts,
         entry: parsed

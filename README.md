@@ -14,8 +14,16 @@ node worker.js
 ```
 
 
-## developmeent
+## Developmeent
 
 ```
 mongod --config /usr/local/etc/mongod.conf
+```
+
+## Indexes
+
+```js
+db.userdata.createIndex({ "ts": 1 })
+db.userdata.createIndex({ "username": 1 })
+db.userdata.createIndex({ "uintId": 1 }, { "unique": true })
 ```
