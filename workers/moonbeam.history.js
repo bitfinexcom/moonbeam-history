@@ -42,7 +42,7 @@ class MoonbeamHistory {
       }
       const parsed = JSON.parse(data)
 
-      let [, type, entry, , uintId] = parsed
+      let [, type, entry] = parsed
 
       if (type === 'te') {
         this.handleTrade(parsed)
@@ -50,8 +50,10 @@ class MoonbeamHistory {
         return
       }
 
+      const uintId = parsed.pop()
+      const username = parsed.pop()
+
       let ts = entry[4]
-      let username = parsed.pop()
 
       if (type === 'tu') {
         ts = entry[2]
