@@ -78,13 +78,15 @@ class MoonbeamHistory {
 
           const fee = parsed[2][8]
           const cur = parsed[2][9]
+          const amount = parsed[2][4]
 
           const doc = {
             uintId: uintIdLong,
             username: username,
             ts: ts,
             fee: fee,
-            cur: cur
+            cur: cur,
+            amount: amount
           }
 
           this.feesCollection.insertOne(doc, next)
