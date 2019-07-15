@@ -26,4 +26,7 @@ mongod --config /usr/local/etc/mongod.conf
 db.userdata.createIndex({ "ts": 1 })
 db.userdata.createIndex({ "username": 1 })
 db.userdata.createIndex({ "uintId": 1 }, { "unique": true })
+
+db.fees.createIndex({ "ts": 1, "username": 1 })
+db.fees.createIndex({ "uintId": 1 }, { "unique": true })
 ```
