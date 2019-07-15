@@ -5,9 +5,9 @@ const async = require('async')
 const Long = require('mongodb').Long
 
 class MoonbeamHistory {
-  constructor (conf, db) {
+  constructor (conf, dbPlugin) {
     this.conf = conf
-    this.db = db
+    this.dbPlugin = dbPlugin
   }
 
   handleTrade (msg) {
@@ -40,8 +40,8 @@ class MoonbeamHistory {
         this.tmos = setTimeout(() => { this.work() }, interval)
         return
       }
-      const parsed = JSON.parse(data)
 
+      const parsed = JSON.parse(data)
       let [, type, entry] = parsed
 
       if (type === 'te') {
@@ -59,15 +59,41 @@ class MoonbeamHistory {
         ts = entry[2]
       }
 
-      const doc = {
-        uintId: Long.fromString(uintId),
-        username: username,
-        ts: ts,
-        entry: parsed
-      }
+      const uintIdLong = Long.fromString(uintId)
+      async.parallel([
+        (next) => {
+          const doc = {
+            uintId: uintIdLong,
+            username: username,
+            ts: ts,
+            entry: parsed
+          }
 
-      this.db.collection.insertOne(doc, (err) => {
-        if (err) console.error(err)
+          this.tradesCollection.insertOne(doc, next)
+        },
+        (next) => {
+          if (type !== 'tu') {
+            return next()
+          }
+
+          const fee = parsed[2][8]
+          const cur = parsed[2][9]
+
+          const doc = {
+            uintId: uintIdLong,
+            username: username,
+            ts: ts,
+            fee: fee,
+            cur: cur
+          }
+
+          this.feesCollection.insertOne(doc, next)
+        }
+
+      ], (err) => {
+        if (err) {
+          console.error(err)
+        }
 
         this.tmos = setTimeout(() => { this.work() }, interval)
       })
@@ -77,7 +103,14 @@ class MoonbeamHistory {
   start (cb) {
     async.series([
       (cb) => {
-        this.db.start(cb)
+        this.dbPlugin.start(cb)
+      },
+      (cb) => {
+        const { db, conf } = this.dbPlugin
+
+        this.tradesCollection = db.collection(conf.collection_trades)
+        this.feesCollection = db.collection(conf.collection_fees)
+        cb()
       },
       (cb) => {
         this.redis = new Redis(this.conf.redisConf)
@@ -101,7 +134,7 @@ class MoonbeamHistory {
         cb()
       },
       (cb) => {
-        this.db.stop(cb)
+        this.dbPlugin.stop(cb)
       }
     ], cb)
   }
