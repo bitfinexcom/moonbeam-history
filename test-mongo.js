@@ -1,15 +1,16 @@
 'use strict'
 
 const dbConf = require('./config/mongo.userdata.conf.json')
-const db = require('moonbeam-mongodb')(dbConf)
+const plugin = require('moonbeam-mongodb')(dbConf)
 
-db.start(() => {
-  const stmt = { $query: { username: 'testuser4321' } }
+plugin.start(() => {
+  const stmt = { username: 'testuser4321' }
 
-  db.collection
+  const { db } = plugin
+  db.collection('tradefees')
     .find(stmt, { limit: 50 })
     .sort({ ts: -1 })
-    .project({ entry: 1, _id: 0 })
+    // .project({ entry: 1, _id: 0 })
     .toArray((err, entries) => {
       if (err) throw err
 
