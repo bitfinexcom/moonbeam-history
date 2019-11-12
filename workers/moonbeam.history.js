@@ -99,10 +99,10 @@ class MoonbeamHistory {
             symbol,
             ts,
             orderId,
-            amount,
-            price,
+            amount: +amount,
+            price: +price,
             oType,
-            fee,
+            fee: +fee,
             feeCurrency,
             clientId,
             irreversible
