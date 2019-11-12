@@ -9,7 +9,7 @@ db.start(() => {
   db.collection
     .find(stmt, { limit: 50 })
     .sort({ ts: -1 })
-    .project({ 'entry': 1, _id: 0 })
+    .project({ entry: 1, _id: 0 })
     .toArray((err, entries) => {
       if (err) throw err
 
