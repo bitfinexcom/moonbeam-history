@@ -42,7 +42,7 @@ class MoonbeamHistory {
       }
 
       const parsed = JSON.parse(data)
-      let [, type, entry] = parsed
+      const [, type, entry] = parsed
 
       if (type === 'te') {
         this.handleTrade(parsed)
@@ -76,20 +76,39 @@ class MoonbeamHistory {
             return next()
           }
 
-          const fee = parsed[2][8]
-          const cur = parsed[2][9]
-          const amount = parsed[2][4]
+          const [
+            nuid,
+            symbol,
+            ts,
+            orderId,
+            amount,
+            price,
+            oType,
+            , // 0
+            fee,
+            feeCurrency,
+            clientId,
+            irreversible
+          ] = parsed[2]
 
           const doc = {
             uintId: uintIdLong,
             username: username,
-            ts: ts,
-            fee: fee,
-            cur: cur,
-            amount: amount
+
+            nuid,
+            symbol,
+            ts,
+            orderId,
+            amount: +amount,
+            price: +price,
+            oType,
+            fee: +fee,
+            feeCurrency,
+            clientId,
+            irreversible
           }
 
-          this.feesCollection.insertOne(doc, next)
+          this.tradeFeesCollection.insertOne(doc, next)
         }
 
       ], (err) => {
@@ -111,7 +130,7 @@ class MoonbeamHistory {
         const { db, conf } = this.dbPlugin
 
         this.tradesCollection = db.collection(conf.collection_trades)
-        this.feesCollection = db.collection(conf.collection_fees)
+        this.tradeFeesCollection = db.collection(conf.collection_trade_fees)
         cb()
       },
       (cb) => {

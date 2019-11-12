@@ -2,5 +2,5 @@
   "dbName": "foo_history",
   "mongoUrl": "mongodb://localhost",
   "collection_trades": "userdata",
-  "collection_fees": "fees"
+  "collection_trade_fees": "tradefees"
 }
